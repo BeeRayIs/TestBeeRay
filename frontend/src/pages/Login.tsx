@@ -1,0 +1,67 @@
+import React, { useState } from 'react';
+import { useNavigate, Link } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
+
+const Login: React.FC = () => {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+  const { login } = useAuth();
+  const navigate = useNavigate();
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError('');
+
+    try {
+      await login(email, password);
+      navigate('/');
+    } catch (err: any) {
+      setError(err.response?.data?.error || 'Login failed');
+    }
+  };
+
+  return (
+    <div className="page">
+      <div className="form-container">
+        <h2 style={{ fontSize: '1.875rem', fontWeight: 700, marginBottom: '2rem', textAlign: 'center' }}>
+          Login to AI Hardware Shop
+        </h2>
+
+        <form onSubmit={handleSubmit}>
+          <div className="form-group">
+            <label>Email</label>
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />
+          </div>
+
+          <div className="form-group">
+            <label>Password</label>
+            <input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
+          </div>
+
+          {error && <div className="error">{error}</div>}
+
+          <button type="submit" className="btn btn-primary" style={{ width: '100%' }}>
+            Login
+          </button>
+        </form>
+
+        <p style={{ marginTop: '1.5rem', textAlign: 'center', color: '#6b7280' }}>
+          Don't have an account? <Link to="/register" style={{ color: '#667eea', fontWeight: 600 }}>Register</Link>
+        </p>
+      </div>
+    </div>
+  );
+};
+
+export default Login;
